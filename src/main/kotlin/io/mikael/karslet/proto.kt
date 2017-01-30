@@ -2,7 +2,7 @@ package io.mikael.karslet
 
 fun main(args: Array<String>) {
 
-    val r = rule {
+    val r1 = rule {
 
         string { "foobar" } named "fooValue"
 
@@ -15,9 +15,16 @@ fun main(args: Array<String>) {
 
     }
 
-    r.parse("xyzzy")
+    r1.parse("xyzzy")
 
-    println(r.children)
+    println(r1)
+
+    val r2 = rule {
+        string { "agfa" }
+        + r1
+    }
+
+    println(r2)
 
 }
 
@@ -70,6 +77,10 @@ open class RuleContainer(override var name: String?) : Rule {
         return rule
     }
 
+    operator fun Rule.unaryPlus() {
+        children.add(this)
+    }
+
 }
 
 class SequentialMatchAll : RuleContainer(null), Parser {
@@ -93,13 +104,9 @@ class SequentialMatchAny : RuleContainer(null), Parser {
 }
 
 class StringRule(override var name: String?, var value: String = "") : Rule {
-
     override fun toString() = "StringRule($name, $value)"
-
 }
 
 class MatchRule(override var name: String?, var value: Regex = "".toRegex()) : Rule {
-
     override fun toString() = "MatchRule($name, $value)"
-
 }

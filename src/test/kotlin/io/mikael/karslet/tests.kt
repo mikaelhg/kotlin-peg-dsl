@@ -1,16 +1,18 @@
 package io.mikael.karslet
 
+import io.mikael.karslet.Rules.rule
+
 fun main(args: Array<String>) {
 
     val r1 = rule {
 
-        str { "foobar" } named "fooValue"
+        string { "foobar" } named "fooValue"
 
         match { "[0-9a-f]".toRegex() } named "barValue"
 
         any {
-            str { "a" }
-            str { "b" }
+            string { "a" }
+            string { "b" }
         } named "ab"
 
     }
@@ -20,9 +22,9 @@ fun main(args: Array<String>) {
     println(r1)
 
     val r2 = rule {
-        str { "agfa" }
+        string { "agfa" }
         + r1
-        str { "canon" }
+        string { "canon" }
         dynamic { { _ -> FakeResults() } }
     }
 
@@ -31,12 +33,12 @@ fun main(args: Array<String>) {
     val r3 = rule {
         any {
             all {
-                str { "s" }
-                str { "equence" }
+                string { "s" }
+                string { "equence" }
             }
             all {
-                str { "se" }
-                str { "quence" }
+                string { "se" }
+                string { "quence" }
             }
         }
     }
@@ -46,12 +48,12 @@ fun main(args: Array<String>) {
     val r4 = rule {
         or {
             and {
-                str { "s" }
-                str { "equence" }
+                string { "s" }
+                string { "equence" }
             }
             and {
-                str { "se" }
-                str { "quence" }
+                string { "se" }
+                string { "quence" }
             }
         }
     }

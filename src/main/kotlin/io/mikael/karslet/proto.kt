@@ -14,7 +14,7 @@ fun rule(init: SequentialMatchAll.() -> Unit): SequentialMatchAll {
     return rule
 }
 
-abstract class Rule(var name: String?) : Parser {
+abstract class Rule(var name: String? = null) : Parser {
 
     override fun parse(input: String): ParseResults = FakeResults()
 
@@ -24,35 +24,46 @@ abstract class Rule(var name: String?) : Parser {
 
 }
 
-open class RuleContainer(name: String?) : Rule(name) {
+open class RuleContainer : Rule() {
 
     val children: MutableList<Rule> = mutableListOf()
 
     override fun parse(input: String): ParseResults = FakeResults()
 
-    fun string(init: StringRule.() -> String): StringRule {
-        val rule = StringRule(null)
+    fun str(init: StringRule.() -> String): StringRule {
+        val rule = StringRule()
         rule.value = rule.init()
         children.add(rule)
         return rule
     }
 
     fun match(init: MatchRule.() -> Regex): MatchRule {
-        val rule = MatchRule(null)
+        val rule = MatchRule()
         rule.value = rule.init()
         children.add(rule)
         return rule
     }
 
-    fun dynamic(init: DynamicRule.() -> (String) -> ParseResults): DynamicRule {
-        val rule = DynamicRule(null)
+    fun or(init: SequentialMatchAny.() -> Unit) = any(init)
+
+    fun any(init: SequentialMatchAny.() -> Unit): SequentialMatchAny {
+        val rule = SequentialMatchAny()
         rule.init()
         children.add(rule)
         return rule
     }
 
-    fun any(init: SequentialMatchAny.() -> Unit): SequentialMatchAny {
-        val rule = SequentialMatchAny()
+    fun and(init: SequentialMatchAll.() -> Unit) = all(init)
+
+    fun all(init: SequentialMatchAll.() -> Unit): SequentialMatchAll {
+        val rule = SequentialMatchAll()
+        rule.init()
+        children.add(rule)
+        return rule
+    }
+
+    fun dynamic(init: DynamicRule.() -> (String) -> ParseResults): DynamicRule {
+        val rule = DynamicRule()
         rule.init()
         children.add(rule)
         return rule
@@ -67,25 +78,25 @@ open class RuleContainer(name: String?) : Rule(name) {
 /**
  * When parsing, every child must match in order
  */
-class SequentialMatchAll : RuleContainer(null), Parser {
+class SequentialMatchAll : RuleContainer(), Parser {
     override fun toString() = "SequentialMatchAll($name, $children)"
 }
 
 /**
  * When parsing, try each child, return the first match.
  */
-class SequentialMatchAny : RuleContainer(null), Parser {
+class SequentialMatchAny : RuleContainer(), Parser {
     override fun toString() = "SequentialMatchAny($name, $children)"
 }
 
-class StringRule(name: String?, var value: String = "") : Rule(name) {
+class StringRule(var value: String = "") : Rule() {
     override fun toString() = "StringRule($name, $value)"
 }
 
-class MatchRule(name: String?, var value: Regex = "".toRegex()) : Rule(name) {
+class MatchRule(var value: Regex = "".toRegex()) : Rule() {
     override fun toString() = "MatchRule($name, $value)"
 }
 
-class DynamicRule(name: String?) : Rule(name) {
+class DynamicRule : Rule() {
     override fun toString() = "DynamicRule($name)"
 }

@@ -4,13 +4,13 @@ fun main(args: Array<String>) {
 
     val r1 = rule {
 
-        string { "foobar" } named "fooValue"
+        str { "foobar" } named "fooValue"
 
         match { "[0-9a-f]".toRegex() } named "barValue"
 
         any {
-            string { "a" }
-            string { "b" }
+            str { "a" }
+            str { "b" }
         } named "ab"
 
     }
@@ -20,12 +20,42 @@ fun main(args: Array<String>) {
     println(r1)
 
     val r2 = rule {
-        string { "agfa" }
+        str { "agfa" }
         + r1
-        string { "canon" }
+        str { "canon" }
         dynamic { { _ -> FakeResults() } }
     }
 
     println(r2)
+
+    val r3 = rule {
+        any {
+            all {
+                str { "s" }
+                str { "equence" }
+            }
+            all {
+                str { "se" }
+                str { "quence" }
+            }
+        }
+    }
+
+    println(r3)
+
+    val r4 = rule {
+        or {
+            and {
+                str { "s" }
+                str { "equence" }
+            }
+            and {
+                str { "se" }
+                str { "quence" }
+            }
+        }
+    }
+
+    println(r4)
 
 }

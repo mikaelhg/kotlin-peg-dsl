@@ -34,9 +34,23 @@ abstract class MatcherContainer : Matcher() {
 
     override fun parse(input: String): ParseResults = FakeResults()
 
+    fun binary(init: MatchBinary.() -> String): MatchBinary {
+        val rule = MatchBinary()
+        rule.value = rule.init()
+        children.add(rule)
+        return rule
+    }
+
     fun string(init: MatchString.() -> String): MatchString {
         val rule = MatchString()
         rule.value = rule.init()
+        children.add(rule)
+        return rule
+    }
+
+    fun string(value: String): MatchString {
+        val rule = MatchString()
+        rule.value = value
         children.add(rule)
         return rule
     }
@@ -96,6 +110,17 @@ class MatchAny : MatcherContainer(), Parser {
 
 class MatchString(var value: String = "") : Matcher() {
     override fun toString() = if (name != null) "string($name, \"$value\")" else "string(\"$value\")"
+}
+
+class MatchBinary(var value: String = "") : Matcher() {
+    override fun toString() = if (name != null) "binary($name, \"$value\")" else "binary(\"$value\")"
+
+    infix fun String.bitmask(mask: String): String = "bitmask($mask)"
+
+    fun bitmask(mask: String) = "bitmask($mask)"
+
+    fun constant(value: String) = "constant($value)"
+
 }
 
 class MatchRegex(var value: Regex = "".toRegex()) : Matcher() {

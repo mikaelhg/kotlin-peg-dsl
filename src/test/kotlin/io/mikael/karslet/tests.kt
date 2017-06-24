@@ -43,7 +43,7 @@ class Demos {
             string("agfa")
             +r1
             string { "canon" }
-            dynamic { { _ -> FakeResults() } }
+            dynamic { _ -> FakeResults() }
         }
 
         println(r2)

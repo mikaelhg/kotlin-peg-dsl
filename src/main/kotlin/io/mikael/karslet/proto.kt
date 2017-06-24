@@ -80,9 +80,8 @@ abstract class MatcherContainer : Matcher() {
         return rule
     }
 
-    fun dynamic(init: MatchDynamic.() -> (String) -> ParseResults): MatchDynamic {
-        val rule = MatchDynamic()
-        rule.init()
+    fun dynamic(init: (String) -> ParseResults): MatchDynamic {
+        val rule = MatchDynamic(init)
         children.add(rule)
         return rule
     }
@@ -108,11 +107,11 @@ class MatchAny : MatcherContainer(), Parser {
     override fun toString() = if (name != null) "any($name, $children)" else "any($children)"
 }
 
-class MatchString(var value: String = "") : Matcher() {
+class MatchString(internal var value: String = "") : Matcher() {
     override fun toString() = if (name != null) "string($name, \"$value\")" else "string(\"$value\")"
 }
 
-class MatchBinary(var value: String = "") : Matcher() {
+class MatchBinary(internal var value: String = "") : Matcher() {
     override fun toString() = if (name != null) "binary($name, \"$value\")" else "binary(\"$value\")"
 
     infix fun String.bitmask(mask: String): String = "bitmask($mask)"
@@ -123,10 +122,10 @@ class MatchBinary(var value: String = "") : Matcher() {
 
 }
 
-class MatchRegex(var value: Regex = "".toRegex()) : Matcher() {
+class MatchRegex(internal var value: Regex = "".toRegex()) : Matcher() {
     override fun toString() = if (name != null) "match($name, r\"$value\")" else "match(r\"$value\")"
 }
 
-class MatchDynamic : Matcher() {
+class MatchDynamic(internal var function: (String) -> ParseResults) : Matcher() {
     override fun toString() = if (name != null) "dynamic($name)" else "dynamic()"
 }

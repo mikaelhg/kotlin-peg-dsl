@@ -22,6 +22,11 @@ abstract class Matcher(var name: String? = null) : Parser {
 
     override fun parse(input: String): ParseResults = FakeResults()
 
+    fun maybe(): MatchOptional {
+        val rule = MatchOptional()
+        return rule
+    }
+
     infix fun named(name: String) {
         this.name = name
     }
@@ -90,6 +95,18 @@ abstract class MatcherContainer : Matcher() {
         children.add(this)
     }
 
+    operator fun Matcher.invoke() {
+        children.add(this)
+    }
+
+    operator fun <T : Matcher> T.invoke(init: T.() -> Unit) {
+        this.init()
+    }
+
+}
+
+class MatchOptional : MatcherContainer(), Parser {
+
 }
 
 /**
@@ -112,6 +129,7 @@ class MatchString(internal var value: String = "") : Matcher() {
 }
 
 class MatchBinary(internal var value: String = "") : Matcher() {
+
     override fun toString() = if (name != null) "binary($name, \"$value\")" else "binary(\"$value\")"
 
     infix fun String.bitmask(mask: String): String = "bitmask($mask)"

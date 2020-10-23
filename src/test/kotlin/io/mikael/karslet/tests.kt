@@ -8,6 +8,9 @@ class Calculator {
     @Test
     fun calculate() {
 
+        val number = rule {
+            match { "[+\\-]".toRegex() }.maybe()
+        }
 
     }
 
@@ -41,7 +44,7 @@ class Demos {
 
         val r2 = rule {
             string("agfa")
-            +r1
+            r1()
             string { "canon" }
             dynamic { _ -> FakeResults() }
         }

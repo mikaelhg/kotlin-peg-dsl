@@ -10,7 +10,13 @@ class FakeResults : ParseResults
 
 object Rules {
 
-    fun rule(init: MatchAll.() -> Unit): MatchAll {
+    fun <T> parser(init: MatchAll.() -> Unit): MatchAll {
+        val rule = MatchAll()
+        rule.init()
+        return rule
+    }
+
+    fun <T> parser(context: T, init: MatchAll.() -> Unit): MatchAll {
         val rule = MatchAll()
         rule.init()
         return rule
@@ -27,7 +33,7 @@ abstract class Matcher(var name: String? = null) : Parser {
         return rule
     }
 
-    infix fun named(name: String) {
+    infix fun captureTo(name: String) {
         this.name = name
     }
 

@@ -1,14 +1,14 @@
 package io.mikael.karslet
 
-import io.mikael.karslet.Rules.rule
-import org.junit.Test
+import io.mikael.karslet.Rules.parser
+import org.junit.jupiter.api.Test
 
 class Calculator {
 
     @Test
     fun calculate() {
 
-        val number = rule {
+        val number = parser<Any> {
             match { "[+\\-]".toRegex() }.maybe()
         }
 
@@ -21,20 +21,20 @@ class Demos {
     @Test
     fun demos() {
 
-        val r1 = rule {
+        val r1 = parser<Any> {
 
             binary { constant("0xcafebabe") }
 
             binary { bitmask("1xx1001") }
 
-            string { "foobar" } named "fooValue"
+            string { "foobar" } captureTo "fooValue"
 
-            match { "[0-9a-f]".toRegex() } named "barValue"
+            match { "[0-9a-f]".toRegex() } captureTo "barValue"
 
             any {
                 string { "a" }
                 string { "b" }
-            } named "ab"
+            } captureTo "ab"
 
         }
 
@@ -42,7 +42,7 @@ class Demos {
 
         println(r1)
 
-        val r2 = rule {
+        val r2 = parser<Any> {
             string("agfa")
             r1()
             string { "canon" }
@@ -51,7 +51,7 @@ class Demos {
 
         println(r2)
 
-        val r3 = rule {
+        val r3 = parser<Any> {
             any {
                 all {
                     string { "s" }
@@ -66,7 +66,7 @@ class Demos {
 
         println(r3)
 
-        val r4 = rule {
+        val r4 = parser<Any> {
             or {
                 and {
                     string { "s" }
@@ -80,7 +80,6 @@ class Demos {
         }
 
         println(r4)
-
     }
 
 }

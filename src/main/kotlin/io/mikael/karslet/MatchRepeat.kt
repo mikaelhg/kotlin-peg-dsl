@@ -4,29 +4,21 @@ import java.io.Reader
 
 class MatchRepeat<T> : NonTerminalMatcher<T>() {
 
-    private lateinit var successAction: () -> T
-
     private lateinit var iterationAction: () -> Unit
 
+    @ParserConfiguration
     var min = 1
 
+    @ParserConfiguration
     var max = Integer.MAX_VALUE
 
     /**
      * Every time we've successfully played all of our children, we call this.
      */
+    @ParserConfiguration
     fun onIteration(iterationAction: () -> Unit) {
         this.iterationAction = iterationAction
     }
-
-    /**
-     * When we're done repeating, we'll call this.
-     */
-    fun onSuccess(successAction: () -> T) {
-        this.successAction = successAction
-    }
-
-    fun value() = successAction()
 
     private fun loopThroughChildren(r: Reader): Boolean {
         r.mark(Integer.MAX_VALUE)

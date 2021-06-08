@@ -1,16 +1,18 @@
 package io.mikael.karslet
 
+import java.io.Reader
+
 /**
  * When parsing, every child must match in order
  */
 class MatchAll<T> : NonTerminalMatcher<T>() {
 
-    private lateinit var successAction: () -> T
-
-    fun onSuccess(successAction: () -> T) {
-        this.successAction = successAction
+    override fun parse(r: Reader): Boolean {
+        r.mark(Integer.MAX_VALUE)
+        beforeAttemptAction()
+        val success = children.all { it.parse(r) }
+        if (!success) r.reset()
+        return success
     }
-
-    fun value() = successAction()
 
 }

@@ -8,20 +8,23 @@ class MatchCharacters : TerminalMatcher<String>() {
 
     private lateinit var matcher: (Char) -> Boolean
 
-    private val sb = StringBuilder()
+    private val value = StringBuilder()
 
+    @ParserConfiguration
     var min = 1
 
+    @ParserConfiguration
     var max = Integer.MAX_VALUE
 
+    @ParserConfiguration
     fun match(matcher: (Char) -> Boolean) {
         this.matcher = matcher
     }
 
-    fun value() = sb.toString()
+    fun value() = value.toString()
 
     override fun resetParserState() {
-        sb.clear()
+        value.clear()
     }
 
     override fun parse(r: Reader): Boolean {
@@ -32,7 +35,7 @@ class MatchCharacters : TerminalMatcher<String>() {
             val (i, c) = r.readChar()
             when {
                 -1 == i -> return current + 1 > min
-                matcher(c) -> sb.append(c)
+                matcher(c) -> value.append(c)
                 else -> {
                     r.reset()
                     return current + 1 > min

@@ -12,14 +12,14 @@ interface Parser<T> {
 
 abstract class NonTerminalMatcher<T> : Parser<T> {
 
-    lateinit var contextCreator: () -> T
+    protected var beforeAttemptAction: () -> Unit = {}
 
     val children: MutableList<Parser<*>> = mutableListOf()
 
     fun characters(init: MatchCharacters.() -> Unit) = add(MatchCharacters(), init)
 
-    fun context(contextCreator: () -> T) {
-        this.contextCreator = contextCreator
+    fun beforeAttempt(beforeAttemptAction: () -> Unit) {
+        this.beforeAttemptAction = beforeAttemptAction
     }
 
     fun <T> any(init: MatchAny<T>.() -> Unit) = add(MatchAny(), init)
@@ -40,8 +40,8 @@ abstract class NonTerminalMatcher<T> : Parser<T> {
 
     override fun parse(r: Reader): Boolean {
         r.mark(Integer.MAX_VALUE)
+        beforeAttemptAction()
         val success = children.all { it.parse(r) }
-        println("$this $success $children")
         if (!success) r.reset()
         return success
     }

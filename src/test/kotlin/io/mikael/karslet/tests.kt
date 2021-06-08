@@ -26,6 +26,7 @@ class Demos {
 
                     onSuccess { PxRow(k.value(), listOf(v.value())) }
                 }
+                beforeAttempt { results.clear() }
                 onIteration { results += row.value() }
                 onSuccess { results }
             }

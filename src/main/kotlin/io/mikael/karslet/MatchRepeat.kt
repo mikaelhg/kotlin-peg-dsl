@@ -39,6 +39,7 @@ class MatchRepeat<T> : NonTerminalMatcher<T>() {
 
     override fun parse(r: Reader): Boolean {
         var current = 1
+        beforeAttemptAction()
         while (true) {
             if (current > max) break
             val iterationSuccess = loopThroughChildren(r)

@@ -8,4 +8,6 @@ interface Parser<T> {
 
     fun resetParserState()
 
+    fun value(): T
+
 }

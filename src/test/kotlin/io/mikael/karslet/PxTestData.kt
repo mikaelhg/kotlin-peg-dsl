@@ -3,6 +3,7 @@ package io.mikael.karslet
 object PxTestData {
 
     val rows = arrayOf(
+        """FOBBO""",
         """FOO=BAR; XZY=GAG; """,
         """LANGUAGES="fi","sv","en";""",
         """DECIMALS=0;""",

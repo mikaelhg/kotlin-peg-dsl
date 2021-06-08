@@ -36,6 +36,6 @@ abstract class NonTerminalMatcher<T> : Parser<T> {
         children.forEach(Parser<*>::resetParserState)
     }
 
-    fun value() = successAction()
+    override fun value() = successAction()
 
 }

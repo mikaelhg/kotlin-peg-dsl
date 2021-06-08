@@ -21,7 +21,7 @@ class MatchCharacters : TerminalMatcher<String>() {
         this.matcher = matcher
     }
 
-    fun value() = value.toString()
+    override fun value() = value.toString()
 
     override fun resetParserState() {
         value.clear()

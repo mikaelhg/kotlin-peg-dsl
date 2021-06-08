@@ -13,17 +13,12 @@ class Demos {
 
             val rows = repeat<List<PxRow>> {
                 val results = mutableListOf<PxRow>()
-
                 val row = all<PxRow> {
                     val k = characters { match { it != '=' } }
                     characters { min = 1; max = 1; match { it == '=' } }
                     val v = characters { match { it != ';' } }
                     characters { min = 1; max = 1; match { it == ';' } }
-                    characters {
-                        match { it.isWhitespace() }
-                        min = 0
-                    }
-
+                    characters { min = 0; match { it.isWhitespace() } }
                     onSuccess { PxRow(k.value(), listOf(v.value())) }
                 }
                 beforeAttempt { results.clear() }

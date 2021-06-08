@@ -26,20 +26,18 @@ class Demos {
 
                     onSuccess { PxRow(k.value(), listOf(v.value())) }
                 }
-
-                onIteration {
-                    results += row.value()
-                }
-
+                onIteration { results += row.value() }
                 onSuccess { results }
-
             }
 
             onSuccess { rows.value() }
         }
 
-        val success = px.parse(StringReader("FOO=BAR;"))
-        println("$success ${px.value()}")
+        PxTestData.rows.forEach { row ->
+            val success = px.parse(StringReader(row))
+            println("$success ${px.value()}")
+        }
+
     }
 
 }

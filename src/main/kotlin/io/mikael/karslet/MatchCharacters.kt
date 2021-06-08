@@ -4,7 +4,7 @@ import java.io.Reader
 import java.lang.StringBuilder
 
 @KarsletMarker
-class MatchCharacters : TerminalMatcher() {
+class MatchCharacters : TerminalMatcher<String>() {
 
     private lateinit var matcher: (Char) -> Boolean
 
@@ -19,6 +19,10 @@ class MatchCharacters : TerminalMatcher() {
     }
 
     fun value() = sb.toString()
+
+    override fun resetParserState() {
+        sb.clear()
+    }
 
     override fun parse(r: Reader): Boolean {
         var current = 0

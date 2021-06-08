@@ -2,17 +2,25 @@ package io.mikael.karslet
 
 import java.io.Reader
 
-interface Parser {
+interface Parser<T> {
 
     fun parse(r: Reader): Boolean
 
+    fun resetParserState()
+
 }
 
-abstract class NonTerminalMatcher : Parser {
+abstract class NonTerminalMatcher<T> : Parser<T> {
 
-    val children: MutableList<Parser> = mutableListOf()
+    lateinit var contextCreator: () -> T
+
+    val children: MutableList<Parser<*>> = mutableListOf()
 
     fun characters(init: MatchCharacters.() -> Unit) = add(MatchCharacters(), init)
+
+    fun context(contextCreator: () -> T) {
+        this.contextCreator = contextCreator
+    }
 
     fun <T> any(init: MatchAny<T>.() -> Unit) = add(MatchAny(), init)
 
@@ -20,14 +28,18 @@ abstract class NonTerminalMatcher : Parser {
 
     fun <T> repeat(init: MatchRepeat<T>.() -> Unit) = add(MatchRepeat(), init)
 
-    fun <T : Parser> add(child: T, init: T.() -> Unit) = child.also(init).also(children::add)
+    fun <TT : Parser<*>> add(child: TT, init: TT.() -> Unit) = child.also(init).also(children::add)
 
-    operator fun NonTerminalMatcher.unaryPlus() {
+    operator fun NonTerminalMatcher<Any>.unaryPlus() {
         children.add(this)
     }
 
+    override fun resetParserState() {
+        children.forEach(Parser<*>::resetParserState)
+    }
+
     override fun parse(r: Reader): Boolean {
-        r.mark(10240)
+        r.mark(Integer.MAX_VALUE)
         val success = children.all { it.parse(r) }
         println("$this $success $children")
         if (!success) r.reset()
@@ -36,4 +48,4 @@ abstract class NonTerminalMatcher : Parser {
 
 }
 
-abstract class TerminalMatcher : Parser
+abstract class TerminalMatcher<T> : Parser<T>

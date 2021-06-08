@@ -35,8 +35,12 @@ class MatchRepeat<T> : NonTerminalMatcher<T>() {
         while (true) {
             if (current > max) break
             val iterationSuccess = loopThroughChildren(r)
-            if (!iterationSuccess) break
-            iterationAction()
+            if (iterationSuccess) {
+                iterationAction()
+            } else {
+                this.resetParserState()
+                break
+            }
             this.resetParserState()
             current += 1
         }

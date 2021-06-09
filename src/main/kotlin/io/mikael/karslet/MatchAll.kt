@@ -8,10 +8,19 @@ import java.io.Reader
 class MatchAll<T> : NonTerminalMatcher<T>() {
 
     override fun parse(r: Reader): Boolean {
+        resetParserState()
+        for (c in children) {
+            when (c) {
+                is NonTerminalMatcher -> c.beforeAttemptAction()
+            }
+        }
         r.mark(Integer.MAX_VALUE)
         beforeAttemptAction()
         val success = children.all { it.parse(r) }
-        if (!success) r.reset()
+        if (!success) {
+            r.reset()
+            resetParserState()
+        }
         return success
     }
 

@@ -4,9 +4,9 @@ abstract class NonTerminalMatcher<T> : Parser<T> {
 
     val children: MutableList<Parser<*>> = mutableListOf()
 
-    protected var beforeAttemptAction: () -> Unit = {}
+    var beforeAttemptAction: () -> Unit = {}
 
-    protected lateinit var successAction: () -> T
+    lateinit var successAction: () -> T
 
     @ParserConfiguration
     fun beforeAttempt(beforeAttemptAction: () -> Unit) {

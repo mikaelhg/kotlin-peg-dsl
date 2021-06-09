@@ -5,7 +5,9 @@ import java.io.StringReader
 
 data class PxKeyword(val keyword: String, val language: String?, val specifiers: List<String>?)
 
-typealias PxRow = Pair<PxKeyword, List<String>>
+data class PxValue(var numberValue: Long?, var stringValue: String?, var listValue: List<String>?)
+
+typealias PxRow = Pair<PxKeyword, PxValue>
 
 class Demos {
 
@@ -16,6 +18,7 @@ class Demos {
         val last = repeat<List<String>> {
             min = 0
             val results = mutableListOf<String>()
+            beforeAttempt { results.clear() }
             characters { min = 1; max = 1; match { it == ',' } }
             characters { min = 1; max = 1; match { it == '"' } }
             val current = characters { min = 0; match { it != '"' } }
@@ -28,6 +31,7 @@ class Demos {
 
     fun keywordLanguage() = MatchRepeat<String?>().apply {
         var result: String? = null
+        beforeAttempt { result = null }
         min = 0
         characters { min = 1; max = 1; match { it == '[' } }
         val lang = characters { min = 2; max = 2; match { it.isLetter() } }
@@ -38,6 +42,7 @@ class Demos {
 
     fun keywordSpecifiers() = MatchRepeat<List<String>?>().apply {
         var result: List<String>? = null
+        beforeAttempt { result = null }
         min = 0
         characters { min = 1; max = 1; match { it == '(' } }
         val strings = include(stringOrList())
@@ -53,6 +58,13 @@ class Demos {
         onSuccess { PxKeyword(kw.value(), lang.value(), spec.value()) }
     }
 
+    fun pxValue() = MatchAny<PxValue>().apply {
+        val strings = include(stringOrList())
+        val numbers = characters { min = 0; match { it.isDigit() } }
+        val letters = characters { min = 0; match { it.isLetterOrDigit() } }
+        onSuccess { PxValue(numbers.value().toLongOrNull(), letters.value(), strings.value()) }
+    }
+
     @Test
     fun demos() {
         val px = Karslet.parser<List<PxRow>> {
@@ -62,10 +74,10 @@ class Demos {
                 val row = all<PxRow> {
                     val k = include(pxKeyword())
                     characters { min = 1; max = 1; match { it == '=' } }
-                    val v = characters { match { it != ';' } }
+                    val v = include(pxValue())
                     characters { min = 1; max = 1; match { it == ';' } }
                     characters { min = 0; match { it.isWhitespace() } }
-                    onSuccess { PxRow(k.value(), listOf(v.value())) }
+                    onSuccess { PxRow(k.value(), v.value()) }
                 }
                 beforeAttempt { results.clear() }
                 onIteration { results += row.value() }

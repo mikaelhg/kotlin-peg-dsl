@@ -30,22 +30,28 @@ class MatchRepeat<T> : NonTerminalMatcher<T>() {
     }
 
     override fun parse(r: Reader): Boolean {
+        resetParserState()
+        for (c in children) {
+            when (c) {
+                is NonTerminalMatcher -> c.beforeAttemptAction()
+            }
+        }
         var current = 0
         beforeAttemptAction()
         while (true) {
+            resetParserState()
             if (current > max) break
             val iterationSuccess = loopThroughChildren(r)
             if (iterationSuccess) {
                 iterationAction()
             } else {
-                this.resetParserState()
                 break
             }
-            this.resetParserState()
             current += 1
         }
         val success = current in min until max
         if (success) successAction()
+        resetParserState()
         return success
     }
 

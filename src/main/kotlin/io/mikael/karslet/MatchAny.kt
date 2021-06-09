@@ -9,7 +9,24 @@ import java.io.Reader
 class MatchAny<T> : NonTerminalMatcher<T>() {
 
     override fun parse(r: Reader): Boolean {
-        TODO()
+        resetParserState()
+        for (c in children) {
+            when (c) {
+                is NonTerminalMatcher -> c.beforeAttemptAction()
+            }
+        }
+        r.mark(Integer.MAX_VALUE)
+        beforeAttemptAction()
+        for (c in children) {
+            val success = c.parse(r)
+            if (success) {
+                return true
+            } else {
+                resetParserState()
+                r.reset()
+            }
+        }
+        return false
     }
 
 }

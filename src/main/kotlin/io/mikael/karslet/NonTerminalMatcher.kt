@@ -28,9 +28,7 @@ abstract class NonTerminalMatcher<T> : Parser<T> {
 
     fun <T : Parser<*>> add(child: T, init: T.() -> Unit) = child.also(init).also(children::add)
 
-    operator fun NonTerminalMatcher<Any>.unaryPlus() {
-        children.add(this)
-    }
+    fun <T: Parser<*>> include(item: T): T = item.also(children::add)
 
     override fun resetParserState() {
         children.forEach(Parser<*>::resetParserState)

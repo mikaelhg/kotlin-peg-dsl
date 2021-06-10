@@ -18,12 +18,6 @@ abstract class NonTerminalMatcher<T> : Parser<T> {
         this.successAction = successAction
     }
 
-    fun notCharacters(vararg chars: Char, init: (MatchCharacters.() -> Unit)? = null) =
-        add(MatchCharacters()) { match { !(it in chars) }; if(null != init) this.init() }
-
-    fun characters(min: Int = 1, max: Int = Integer.MAX_VALUE, chars: CharRange) =
-        add(MatchCharacters()) { this.min = min; this.max = max; match { it in chars } }
-
     fun characters(min: Int = 1, max: Int = Integer.MAX_VALUE, matcher: (Char) -> Boolean) =
         add(MatchCharacters()) { this.min = min; this.max = max; match(matcher) }
 
@@ -36,10 +30,10 @@ abstract class NonTerminalMatcher<T> : Parser<T> {
     fun character(vararg char: Char) =
         add(MatchCharacters()) { min = 1; max = 1; match { it in char } }
 
-    fun character(char: CharRange) =
-        add(MatchCharacters()) { min = 1; max = 1; match { it in char } }
-
     fun characters(init: MatchCharacters.() -> Unit) = add(MatchCharacters(), init)
+
+    fun whitespace(min: Int = 0, max: Int = Integer.MAX_VALUE) =
+        add(MatchCharacters()) { this.min = min; this.max = max; match { it.isWhitespace() } }
 
     fun <T> any(init: MatchAny<T>.() -> Unit) = add(MatchAny(), init)
 

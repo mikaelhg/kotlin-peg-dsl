@@ -52,7 +52,7 @@ class Demos {
     }
 
     fun pxKeyword() = MatchAll<PxKeyword>().apply {
-        val kw = notCharacters('[', '(', '=') { min = 1 }
+        val kw = characters(1) { it !in arrayOf('[', '(', '=') }
         val lang = include(keywordLanguage())
         val spec = include(keywordSpecifiers())
         onSuccess { PxKeyword(kw.value(), lang.value(), spec.value()) }
@@ -76,7 +76,8 @@ class Demos {
                     character('=')
                     val v = include(pxValue())
                     character(';')
-                    characters(0) { it.isWhitespace() }
+                    whitespace()
+
                     onSuccess { PxRow(k.value(), v.value()) }
                 }
                 beforeAttempt { results.clear() }

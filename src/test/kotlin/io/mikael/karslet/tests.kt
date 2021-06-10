@@ -11,7 +11,7 @@ typealias PxRow = Pair<PxKeyword, PxValue>
 
 class Demos {
 
-    fun stringOrList() = MatchAll<List<String>>().apply {
+    fun stringOrList() = Karslet.all<List<String>> {
         character('"')
         val first = characters(0) { it != '"' }
         character('"')
@@ -28,7 +28,7 @@ class Demos {
         onSuccess { listOf(first.value()) + last.value() }
     }
 
-    fun keywordLanguage() = MatchRepeat<String?>(min = 0).apply {
+    fun keywordLanguage() = Karslet.repeat<String?>(min = 0) {
         var state: String? = null
         beforeAttempt { state = null }
         character('[')
@@ -38,7 +38,7 @@ class Demos {
         onSuccess { state }
     }
 
-    fun keywordSpecifiers() = MatchRepeat<List<String>?>(min = 0).apply {
+    fun keywordSpecifiers() = Karslet.repeat<List<String>?>(min = 0) {
         var state: List<String>? = null
         beforeAttempt { state = null }
         character('(')
@@ -48,14 +48,14 @@ class Demos {
         onSuccess { state }
     }
 
-    fun pxKeyword() = MatchAll<PxKeyword>().apply {
+    fun pxKeyword() = Karslet.all<PxKeyword> {
         val kw = characters(1) { it !in arrayOf('[', '(', '=') }
         val lang = include(keywordLanguage())
         val spec = include(keywordSpecifiers())
         onSuccess { PxKeyword(kw.value(), lang.value(), spec.value()) }
     }
 
-    fun pxValue() = MatchAny<PxValue>().apply {
+    fun pxValue() = Karslet.any<PxValue> {
         val strings = include(stringOrList())
         val numbers = characters(0) { it.isDigit() }
         val letters = characters(0) { it.isLetterOrDigit() }

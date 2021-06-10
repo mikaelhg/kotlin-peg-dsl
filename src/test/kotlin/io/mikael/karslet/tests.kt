@@ -13,14 +13,14 @@ class Demos {
 
     fun stringOrList() = Karslet.all<List<String>> {
         character('"')
-        val first = characters(0) { it != '"' }
+        val first = characters(min = 0) { it != '"' }
         character('"')
         val last = repeat<List<String>>(min = 0) {
             val results = mutableListOf<String>()
             beforeAttempt { results.clear() }
             character(',')
             character('"')
-            val current = characters(0) { it != '"' }
+            val current = characters(min = 0) { it != '"' }
             character('"')
             onIteration { results += current.value() }
             onSuccess { results }
@@ -32,7 +32,7 @@ class Demos {
         var state: String? = null
         beforeAttempt { state = null }
         character('[')
-        val lang = characters(2, 2) { it.isLetter() }
+        val lang = characters(min = 2, max = 2) { it.isLetter() }
         character(']')
         onIteration { state = lang.value() }
         onSuccess { state }
@@ -49,7 +49,7 @@ class Demos {
     }
 
     fun pxKeyword() = Karslet.all<PxKeyword> {
-        val kw = characters(1) { it !in arrayOf('[', '(', '=') }
+        val kw = characters(min = 1) { it !in arrayOf('[', '(', '=') }
         val lang = include(keywordLanguage())
         val spec = include(keywordSpecifiers())
         onSuccess { PxKeyword(kw.value(), lang.value(), spec.value()) }
@@ -57,8 +57,8 @@ class Demos {
 
     fun pxValue() = Karslet.any<PxValue> {
         val strings = include(stringOrList())
-        val numbers = characters(1) { it.isDigit() }
-        val letters = characters(1) { it.isLetterOrDigit() }
+        val numbers = characters(min = 1) { it.isDigit() }
+        val letters = characters(min = 1) { it.isLetterOrDigit() }
         onSuccess { PxValue(numbers.value().toLongOrNull(), letters.value(), strings.value()) }
     }
 

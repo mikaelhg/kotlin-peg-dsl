@@ -64,31 +64,28 @@ class Demos {
 
     @Test
     fun pxParserDemo() {
-        val px = Karslet.parser<List<PxRow>> {
 
-            val rows = repeat<List<PxRow>> {
-                val state = mutableListOf<PxRow>()
-                val row = all<PxRow> {
-                    val k = include(pxKeyword())
-                    character('=')
-                    val v = include(pxValue())
-                    character(';')
-                    whitespace()
+        val parser = Karslet.repeat<List<PxRow>> {
+            val state = mutableListOf<PxRow>()
 
-                    onSuccess { PxRow(k.value(), v.value()) }
-                }
+            val row = all<PxRow> {
+                val k = include(pxKeyword())
+                character('=')
+                val v = include(pxValue())
+                character(';')
+                whitespace()
 
-                beforeAttempt { state.clear() }
-                onIteration { state += row.value() }
-                onSuccess { state }
+                onSuccess { PxRow(k.value(), v.value()) }
             }
 
-            onSuccess { rows.value() }
+            beforeAttempt { state.clear() }
+            onIteration { state += row.value() }
+            onSuccess { state }
         }
 
         PxTestData.rows.forEach { row ->
-            val success = px.parse(StringReader(row))
-            println("$success ${px.value()}")
+            val success = parser.parse(StringReader(row))
+            println("$success ${parser.value()}")
         }
 
     }

@@ -41,7 +41,11 @@ abstract class NonTerminalMatcher<T> : Parser<T> {
 
     fun <T> repeat(init: MatchRepeat<T>.() -> Unit) = add(MatchRepeat(), init)
 
-    fun <T : Parser<*>> add(child: T, init: T.() -> Unit) = child.also(init).also(children::add)
+    fun <T> repeat(min: Int = 1, max: Int = Integer.MAX_VALUE, init: MatchRepeat<T>.() -> Unit) =
+        add(MatchRepeat<T>()) { this.min = min; this.max = max; this.init() }
+
+    @SuppressWarnings("WeakerAccess")
+    protected fun <T : Parser<*>> add(child: T, init: T.() -> Unit) = child.also(init).also(children::add)
 
     fun <T: Parser<*>> include(item: T): T = item.also(children::add)
 

@@ -15,8 +15,7 @@ class Demos {
         character('"')
         val first = characters(0) { it != '"' }
         character('"')
-        val last = repeat<List<String>> {
-            min = 0
+        val last = repeat<List<String>>(min = 0) {
             val results = mutableListOf<String>()
             beforeAttempt { results.clear() }
             character(',')
@@ -29,26 +28,24 @@ class Demos {
         onSuccess { listOf(first.value()) + last.value() }
     }
 
-    fun keywordLanguage() = MatchRepeat<String?>().apply {
-        var result: String? = null
-        beforeAttempt { result = null }
-        min = 0
+    fun keywordLanguage() = MatchRepeat<String?>(min = 0).apply {
+        var state: String? = null
+        beforeAttempt { state = null }
         character('[')
         val lang = characters(2, 2) { it.isLetter() }
         character(']')
-        onIteration { result = lang.value() }
-        onSuccess { result }
+        onIteration { state = lang.value() }
+        onSuccess { state }
     }
 
-    fun keywordSpecifiers() = MatchRepeat<List<String>?>().apply {
-        var result: List<String>? = null
-        beforeAttempt { result = null }
-        min = 0
+    fun keywordSpecifiers() = MatchRepeat<List<String>?>(min = 0).apply {
+        var state: List<String>? = null
+        beforeAttempt { state = null }
         character('(')
         val strings = include(stringOrList())
         character(')')
-        onIteration { result = strings.value() }
-        onSuccess { result }
+        onIteration { state = strings.value() }
+        onSuccess { state }
     }
 
     fun pxKeyword() = MatchAll<PxKeyword>().apply {
@@ -66,11 +63,11 @@ class Demos {
     }
 
     @Test
-    fun demos() {
+    fun pxParserDemo() {
         val px = Karslet.parser<List<PxRow>> {
 
             val rows = repeat<List<PxRow>> {
-                val results = mutableListOf<PxRow>()
+                val state = mutableListOf<PxRow>()
                 val row = all<PxRow> {
                     val k = include(pxKeyword())
                     character('=')
@@ -80,9 +77,10 @@ class Demos {
 
                     onSuccess { PxRow(k.value(), v.value()) }
                 }
-                beforeAttempt { results.clear() }
-                onIteration { results += row.value() }
-                onSuccess { results }
+
+                beforeAttempt { state.clear() }
+                onIteration { state += row.value() }
+                onSuccess { state }
             }
 
             onSuccess { rows.value() }

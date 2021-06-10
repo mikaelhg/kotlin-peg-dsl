@@ -2,15 +2,21 @@ package io.mikael.karslet
 
 import java.io.Reader
 
-class MatchRepeat<T> : NonTerminalMatcher<T>() {
+open class MatchRepeat<T>() : NonTerminalMatcher<T>() {
 
-    private lateinit var iterationAction: () -> Unit
+    private var iterationAction: () -> Unit = {}
 
     @ParserConfiguration
     var min = 1
 
     @ParserConfiguration
     var max = Integer.MAX_VALUE
+
+    constructor(min: Int = 0, max: Int = Integer.MAX_VALUE, iterationAction: () -> Unit = {}) : this() {
+        this.min = min
+        this.max = max
+        this.iterationAction = iterationAction
+    }
 
     /**
      * Every time we've successfully played all of our children, we call this.

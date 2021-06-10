@@ -4,7 +4,7 @@ import java.io.Reader
 import java.lang.StringBuilder
 
 @KarsletMarker
-class MatchCharacters : TerminalMatcher<String>() {
+open class MatchCharacters : TerminalMatcher<String>() {
 
     private lateinit var matcher: (Char) -> Boolean
 

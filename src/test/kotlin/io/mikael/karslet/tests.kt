@@ -12,17 +12,17 @@ typealias PxRow = Pair<PxKeyword, PxValue>
 class Demos {
 
     fun stringOrList() = MatchAll<List<String>>().apply {
-        characters { min = 1; max = 1; match { it == '"' } }
-        val first = characters { min = 0; match { it != '"' } }
-        characters { min = 1; max = 1; match { it == '"' } }
+        character('"')
+        val first = characters(0) { it != '"' }
+        character('"')
         val last = repeat<List<String>> {
             min = 0
             val results = mutableListOf<String>()
             beforeAttempt { results.clear() }
-            characters { min = 1; max = 1; match { it == ',' } }
-            characters { min = 1; max = 1; match { it == '"' } }
-            val current = characters { min = 0; match { it != '"' } }
-            characters { min = 1; max = 1; match { it == '"' } }
+            character(',')
+            character('"')
+            val current = characters(0) { it != '"' }
+            character('"')
             onIteration { results += current.value() }
             onSuccess { results }
         }
@@ -33,9 +33,9 @@ class Demos {
         var result: String? = null
         beforeAttempt { result = null }
         min = 0
-        characters { min = 1; max = 1; match { it == '[' } }
-        val lang = characters { min = 2; max = 2; match { it.isLetter() } }
-        characters { min = 1; max = 1; match { it == ']' } }
+        character('[')
+        val lang = characters(2, 2) { it.isLetter() }
+        character(']')
         onIteration { result = lang.value() }
         onSuccess { result }
     }
@@ -44,15 +44,15 @@ class Demos {
         var result: List<String>? = null
         beforeAttempt { result = null }
         min = 0
-        characters { min = 1; max = 1; match { it == '(' } }
+        character('(')
         val strings = include(stringOrList())
-        characters { min = 1; max = 1; match { it == ')' } }
+        character(')')
         onIteration { result = strings.value() }
         onSuccess { result }
     }
 
     fun pxKeyword() = MatchAll<PxKeyword>().apply {
-        val kw = characters { min = 1; match { it != '[' && it != '(' && it != '=' } }
+        val kw = notCharacters('[', '(', '=') { min = 1 }
         val lang = include(keywordLanguage())
         val spec = include(keywordSpecifiers())
         onSuccess { PxKeyword(kw.value(), lang.value(), spec.value()) }
@@ -60,8 +60,8 @@ class Demos {
 
     fun pxValue() = MatchAny<PxValue>().apply {
         val strings = include(stringOrList())
-        val numbers = characters { min = 0; match { it.isDigit() } }
-        val letters = characters { min = 0; match { it.isLetterOrDigit() } }
+        val numbers = characters(0) { it.isDigit() }
+        val letters = characters(0) { it.isLetterOrDigit() }
         onSuccess { PxValue(numbers.value().toLongOrNull(), letters.value(), strings.value()) }
     }
 
@@ -73,10 +73,10 @@ class Demos {
                 val results = mutableListOf<PxRow>()
                 val row = all<PxRow> {
                     val k = include(pxKeyword())
-                    characters { min = 1; max = 1; match { it == '=' } }
+                    character('=')
                     val v = include(pxValue())
-                    characters { min = 1; max = 1; match { it == ';' } }
-                    characters { min = 0; match { it.isWhitespace() } }
+                    character(';')
+                    characters(0) { it.isWhitespace() }
                     onSuccess { PxRow(k.value(), v.value()) }
                 }
                 beforeAttempt { results.clear() }

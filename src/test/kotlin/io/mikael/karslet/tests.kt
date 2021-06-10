@@ -57,8 +57,8 @@ class Demos {
 
     fun pxValue() = Karslet.any<PxValue> {
         val strings = include(stringOrList())
-        val numbers = characters(0) { it.isDigit() }
-        val letters = characters(0) { it.isLetterOrDigit() }
+        val numbers = characters(1) { it.isDigit() }
+        val letters = characters(1) { it.isLetterOrDigit() }
         onSuccess { PxValue(numbers.value().toLongOrNull(), letters.value(), strings.value()) }
     }
 

@@ -16,14 +16,14 @@ class Demos {
         val first = characters(min = 0) { it != '"' }
         character('"')
         val last = repeat<List<String>>(min = 0) {
-            val results = mutableListOf<String>()
-            beforeAttempt { results.clear() }
+            val state = mutableListOf<String>()
+            beforeAttempt { state.clear() }
             character(',')
             character('"')
             val current = characters(min = 0) { it != '"' }
             character('"')
-            onIteration { results += current.value() }
-            onSuccess { results }
+            onIteration { state += current.value() }
+            onSuccess { state }
         }
         onSuccess { listOf(first.value()) + last.value() }
     }

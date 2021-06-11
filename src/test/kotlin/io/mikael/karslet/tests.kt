@@ -1,7 +1,6 @@
 package io.mikael.karslet
 
 import org.junit.jupiter.api.Test
-import java.io.StringReader
 import java.nio.CharBuffer
 
 data class PxKeyword(val keyword: String, val language: String?, val specifiers: List<String>?)
@@ -56,13 +55,6 @@ class Demos {
         onSuccess { PxKeyword(kw.value(), lang.value(), spec.value()) }
     }
 
-    /*
-      OK, so this is a problem.
-      numbers will succeed, but well before we hit the ;
-      So we have to play out all of the scenarios for all of the successes.
-      Both numbers ("3") and letters ("3BAR") will succeed, but only letters
-      will help the next step succeed.
-     */
     private fun pxValue() = Karslet.any<PxValue> {
         val strings = all<List<String>?> {
             val x = include(stringOrList())
@@ -92,7 +84,6 @@ class Demos {
                 val k = include(pxKeyword())
                 character('=')
                 val v = include(pxValue())
-                //character(';')
                 whitespace()
 
                 onSuccess { PxRow(k.value(), v.value()) }
@@ -103,15 +94,10 @@ class Demos {
             onSuccess { state }
         }
 
-        val success = parser.parse(CharBuffer.wrap("FOO=3BAR;"))
-        println("$success ${parser.value()}")
-
-        /*
         PxTestData.rows.forEach { row ->
-            val success = parser.parse(StringReader(row))
+            val success = parser.parse(CharBuffer.wrap(row))
             println("$success ${parser.value()}")
         }
-        */
 
     }
 

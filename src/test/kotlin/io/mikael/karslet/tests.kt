@@ -2,16 +2,17 @@ package io.mikael.karslet
 
 import org.junit.jupiter.api.Test
 import java.io.StringReader
+import java.nio.CharBuffer
 
 data class PxKeyword(val keyword: String, val language: String?, val specifiers: List<String>?)
 
-data class PxValue(var numberValue: Long?, var stringValue: String?, var listValue: List<String>?)
+data class PxValue(val numberValue: Long?, val stringValue: String?, val listValue: List<String>?)
 
 typealias PxRow = Pair<PxKeyword, PxValue>
 
 class Demos {
 
-    fun stringOrList() = Karslet.all<List<String>> {
+    private fun stringOrList() = Karslet.all<List<String>> {
         character('"')
         val first = characters(min = 0) { it != '"' }
         character('"')
@@ -28,7 +29,7 @@ class Demos {
         onSuccess { listOf(first.value()) + last.value() }
     }
 
-    fun keywordLanguage() = Karslet.repeat<String?>(min = 0) {
+    private fun keywordLanguage() = Karslet.repeat<String?>(min = 0) {
         var state: String? = null
         beforeAttempt { state = null }
         character('[')
@@ -38,7 +39,7 @@ class Demos {
         onSuccess { state }
     }
 
-    fun keywordSpecifiers() = Karslet.repeat<List<String>?>(min = 0) {
+    private fun keywordSpecifiers() = Karslet.repeat<List<String>?>(min = 0) {
         var state: List<String>? = null
         beforeAttempt { state = null }
         character('(')
@@ -48,18 +49,37 @@ class Demos {
         onSuccess { state }
     }
 
-    fun pxKeyword() = Karslet.all<PxKeyword> {
+    private fun pxKeyword() = Karslet.all<PxKeyword> {
         val kw = characters(min = 1) { it !in arrayOf('[', '(', '=') }
         val lang = include(keywordLanguage())
         val spec = include(keywordSpecifiers())
         onSuccess { PxKeyword(kw.value(), lang.value(), spec.value()) }
     }
 
-    fun pxValue() = Karslet.any<PxValue> {
-        val strings = include(stringOrList())
-        val numbers = characters(min = 1) { it.isDigit() }
-        val letters = characters(min = 1) { it.isLetterOrDigit() }
-        onSuccess { PxValue(numbers.value().toLongOrNull(), letters.value(), strings.value()) }
+    /*
+      OK, so this is a problem.
+      numbers will succeed, but well before we hit the ;
+      So we have to play out all of the scenarios for all of the successes.
+      Both numbers ("3") and letters ("3BAR") will succeed, but only letters
+      will help the next step succeed.
+     */
+    private fun pxValue() = Karslet.any<PxValue> {
+        val strings = all<List<String>?> {
+            val x = include(stringOrList())
+            character(';')
+            onSuccess { x.value() }
+        }
+        val numbers = all<Long?> {
+            val x = characters(min = 1) { it.isDigit() }
+            character(';')
+            onSuccess { x.value().toLongOrNull() }
+        }
+        val letters = all<String?> {
+            val x = characters(min = 1) { it.isLetterOrDigit() }
+            character(';')
+            onSuccess { x.value() }
+        }
+        onSuccess { PxValue(numbers.value(), letters.value(), strings.value()) }
     }
 
     @Test
@@ -72,7 +92,7 @@ class Demos {
                 val k = include(pxKeyword())
                 character('=')
                 val v = include(pxValue())
-                character(';')
+                //character(';')
                 whitespace()
 
                 onSuccess { PxRow(k.value(), v.value()) }
@@ -83,10 +103,15 @@ class Demos {
             onSuccess { state }
         }
 
+        val success = parser.parse(CharBuffer.wrap("FOO=3BAR;"))
+        println("$success ${parser.value()}")
+
+        /*
         PxTestData.rows.forEach { row ->
             val success = parser.parse(StringReader(row))
             println("$success ${parser.value()}")
         }
+        */
 
     }
 

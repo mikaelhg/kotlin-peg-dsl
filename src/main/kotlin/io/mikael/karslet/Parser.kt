@@ -1,10 +1,10 @@
 package io.mikael.karslet
 
-import java.io.Reader
+import java.nio.CharBuffer
 
 interface Parser<T> {
 
-    fun parse(r: Reader): Boolean
+    fun parse(r: CharBuffer): Boolean
 
     fun resetParserState()
 

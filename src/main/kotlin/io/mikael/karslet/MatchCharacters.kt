@@ -1,7 +1,7 @@
 package io.mikael.karslet
 
-import java.io.Reader
-import java.lang.StringBuilder
+import java.nio.BufferUnderflowException
+import java.nio.CharBuffer
 
 @KarsletMarker
 open class MatchCharacters : TerminalMatcher<String>() {
@@ -27,19 +27,21 @@ open class MatchCharacters : TerminalMatcher<String>() {
         value.clear()
     }
 
-    override fun parse(r: Reader): Boolean {
+    override fun parse(r: CharBuffer): Boolean {
         var current = 0
         while (true) {
             if (current > max) return true
-            r.mark(1)
-            val (i, c) = r.readChar()
-            when {
-                -1 == i -> return current + 1 > min
-                matcher(c) -> value.append(c)
-                else -> {
+            r.mark()
+            try {
+                val c = r.get()
+                if (matcher(c)) {
+                    value.append(c)
+                } else {
                     r.reset()
                     return current + 1 > min
                 }
+            } catch (e: BufferUnderflowException) {
+                return current + 1 > min
             }
             current += 1
         }

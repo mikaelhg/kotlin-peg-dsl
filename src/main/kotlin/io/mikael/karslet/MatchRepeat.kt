@@ -1,6 +1,6 @@
 package io.mikael.karslet
 
-import java.io.Reader
+import java.nio.CharBuffer
 
 open class MatchRepeat<T>() : NonTerminalMatcher<T>() {
 
@@ -26,8 +26,8 @@ open class MatchRepeat<T>() : NonTerminalMatcher<T>() {
         this.iterationAction = iterationAction
     }
 
-    private fun loopThroughChildren(r: Reader): Boolean {
-        r.mark(Integer.MAX_VALUE)
+    private fun loopThroughChildren(r: CharBuffer): Boolean {
+        r.mark()
         val success = children.all { it.parse(r) }
         if (!success) {
             r.reset()
@@ -35,7 +35,7 @@ open class MatchRepeat<T>() : NonTerminalMatcher<T>() {
         return success
     }
 
-    override fun parse(r: Reader): Boolean {
+    override fun parse(r: CharBuffer): Boolean {
         resetParserState()
         for (c in children) {
             when (c) {

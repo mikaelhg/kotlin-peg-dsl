@@ -4,7 +4,7 @@ object PxTestData {
 
     val rows = arrayOf(
         """FOBBO""",
-        """FOO=BAR;""",
+        """FOO=3BAR;""",
         """LANGUAGES="fi","sv","en";""",
         """DECIMALS=0;""",
         """SUBJECT-AREA[sv]="Besiktningar av personbilar";""",

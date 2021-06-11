@@ -1,20 +1,20 @@
 package io.mikael.karslet
 
-import java.io.Reader
+import java.nio.CharBuffer
 
 /**
  * When parsing, every child must match in order
  */
 class MatchAll<T> : NonTerminalMatcher<T>() {
 
-    override fun parse(r: Reader): Boolean {
+    override fun parse(r: CharBuffer): Boolean {
         resetParserState()
         for (c in children) {
             when (c) {
                 is NonTerminalMatcher -> c.beforeAttemptAction()
             }
         }
-        r.mark(Integer.MAX_VALUE)
+        r.mark()
         beforeAttemptAction()
         val success = children.all { it.parse(r) }
         if (!success) {

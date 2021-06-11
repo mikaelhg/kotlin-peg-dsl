@@ -1,6 +1,6 @@
 package io.mikael.karslet
 
-import java.io.Reader
+import java.nio.CharBuffer
 
 /**
  * When parsing, try each child, return the first match.
@@ -8,14 +8,14 @@ import java.io.Reader
  */
 open class MatchAny<T> : NonTerminalMatcher<T>() {
 
-    override fun parse(r: Reader): Boolean {
+    override fun parse(r: CharBuffer): Boolean {
         resetParserState()
         for (c in children) {
             when (c) {
                 is NonTerminalMatcher -> c.beforeAttemptAction()
             }
         }
-        r.mark(Integer.MAX_VALUE)
+        //r.mark(Integer.MAX_VALUE)
         beforeAttemptAction()
         for (c in children) {
             val success = c.parse(r)
@@ -23,7 +23,7 @@ open class MatchAny<T> : NonTerminalMatcher<T>() {
                 return true
             } else {
                 resetParserState()
-                r.reset()
+                //r.reset()
             }
         }
         return false

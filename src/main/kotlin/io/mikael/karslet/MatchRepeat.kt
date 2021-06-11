@@ -27,10 +27,10 @@ open class MatchRepeat<T>() : NonTerminalMatcher<T>() {
     }
 
     private fun loopThroughChildren(r: CharBuffer): Boolean {
-        r.mark()
+        val startPosition = r.position()
         val success = children.all { it.parse(r) }
         if (!success) {
-            r.reset()
+            r.position(startPosition)
         }
         return success
     }

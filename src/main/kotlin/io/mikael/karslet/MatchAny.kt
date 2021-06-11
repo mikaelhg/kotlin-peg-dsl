@@ -15,15 +15,15 @@ open class MatchAny<T> : NonTerminalMatcher<T>() {
                 is NonTerminalMatcher -> c.beforeAttemptAction()
             }
         }
-        //r.mark(Integer.MAX_VALUE)
         beforeAttemptAction()
+        val startPosition = r.position()
         for (c in children) {
             val success = c.parse(r)
             if (success) {
                 return true
             } else {
                 resetParserState()
-                //r.reset()
+                r.position(startPosition)
             }
         }
         return false

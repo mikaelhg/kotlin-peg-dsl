@@ -31,13 +31,13 @@ open class MatchCharacters : TerminalMatcher<String>() {
         var current = 0
         while (true) {
             if (current > max) return true
-            r.mark()
+            val startPosition = r.position()
             try {
                 val c = r.get()
                 if (matcher(c)) {
                     value.append(c)
                 } else {
-                    r.reset()
+                    r.position(startPosition)
                     return current + 1 > min
                 }
             } catch (e: BufferUnderflowException) {

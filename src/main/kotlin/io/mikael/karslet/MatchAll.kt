@@ -14,11 +14,11 @@ class MatchAll<T> : NonTerminalMatcher<T>() {
                 is NonTerminalMatcher -> c.beforeAttemptAction()
             }
         }
-        r.mark()
         beforeAttemptAction()
+        val startPosition = r.position()
         val success = children.all { it.parse(r) }
         if (!success) {
-            r.reset()
+            r.position(startPosition)
             resetParserState()
         }
         return success

@@ -1,8 +1,9 @@
-package io.mikael.karslet
+package io.mikael.karslet.operators
 
+import io.mikael.karslet.ParserConfiguration
 import java.nio.CharBuffer
 
-open class MatchRepeat<T>() : NonTerminalMatcher<T>() {
+open class RepeatingOperator<T>() : NonTerminalOperator<T>() {
 
     private var iterationAction: () -> Unit = {}
 
@@ -39,7 +40,7 @@ open class MatchRepeat<T>() : NonTerminalMatcher<T>() {
         resetParserState()
         for (c in children) {
             when (c) {
-                is NonTerminalMatcher -> c.beforeAttemptAction()
+                is NonTerminalOperator -> c.beforeAttemptAction()
             }
         }
         var current = 0

@@ -1,17 +1,17 @@
-package io.mikael.karslet
+package io.mikael.karslet.operators
 
 import java.nio.CharBuffer
 
 /**
  * When parsing, every child must match in order
  */
-class MatchAll<T> : NonTerminalMatcher<T>() {
+class SequenceOperator<T> : NonTerminalOperator<T>() {
 
     override fun parse(r: CharBuffer): Boolean {
         resetParserState()
         for (c in children) {
             when (c) {
-                is NonTerminalMatcher -> c.beforeAttemptAction()
+                is NonTerminalOperator -> c.beforeAttemptAction()
             }
         }
         beforeAttemptAction()

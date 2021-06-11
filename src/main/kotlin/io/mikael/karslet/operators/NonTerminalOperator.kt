@@ -1,6 +1,9 @@
-package io.mikael.karslet
+package io.mikael.karslet.operators
 
-abstract class NonTerminalMatcher<T> : Parser<T> {
+import io.mikael.karslet.Parser
+import io.mikael.karslet.ParserConfiguration
+
+abstract class NonTerminalOperator<T> : Parser<T> {
 
     val children: MutableList<Parser<*>> = mutableListOf()
 
@@ -35,14 +38,14 @@ abstract class NonTerminalMatcher<T> : Parser<T> {
     fun whitespace(min: Int = 0, max: Int = Integer.MAX_VALUE) =
         add(MatchCharacters()) { this.min = min; this.max = max; match { it.isWhitespace() } }
 
-    fun <T> any(init: MatchAny<T>.() -> Unit) = add(MatchAny(), init)
+    fun <T> any(init: OrderedChoiceOperator<T>.() -> Unit) = add(OrderedChoiceOperator(), init)
 
-    fun <T> all(init: MatchAll<T>.() -> Unit) = add(MatchAll(), init)
+    fun <T> all(init: SequenceOperator<T>.() -> Unit) = add(SequenceOperator(), init)
 
-    fun <T> repeat(init: MatchRepeat<T>.() -> Unit) = add(MatchRepeat(), init)
+    fun <T> repeat(init: RepeatingOperator<T>.() -> Unit) = add(RepeatingOperator(), init)
 
-    fun <T> repeat(min: Int = 1, max: Int = Integer.MAX_VALUE, init: MatchRepeat<T>.() -> Unit) =
-        add(MatchRepeat<T>()) { this.min = min; this.max = max; this.init() }
+    fun <T> repeat(min: Int = 1, max: Int = Integer.MAX_VALUE, init: RepeatingOperator<T>.() -> Unit) =
+        add(RepeatingOperator<T>()) { this.min = min; this.max = max; this.init() }
 
     @SuppressWarnings("WeakerAccess")
     protected fun <T : Parser<*>> add(child: T, init: T.() -> Unit) = child.also(init).also(children::add)

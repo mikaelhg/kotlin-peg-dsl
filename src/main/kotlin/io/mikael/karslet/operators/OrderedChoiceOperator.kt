@@ -1,4 +1,4 @@
-package io.mikael.karslet
+package io.mikael.karslet.operators
 
 import java.nio.CharBuffer
 
@@ -6,13 +6,13 @@ import java.nio.CharBuffer
  * When parsing, try each child, return the first match.
  * At least one match is required.
  */
-open class MatchAny<T> : NonTerminalMatcher<T>() {
+open class OrderedChoiceOperator<T> : NonTerminalOperator<T>() {
 
     override fun parse(r: CharBuffer): Boolean {
         resetParserState()
         for (c in children) {
             when (c) {
-                is NonTerminalMatcher -> c.beforeAttemptAction()
+                is NonTerminalOperator -> c.beforeAttemptAction()
             }
         }
         beforeAttemptAction()

@@ -11,7 +11,7 @@ typealias PxRow = Pair<PxKeyword, PxValue>
 
 class Demos {
 
-    private fun stringOrList() = Karslet.all<List<String>> {
+    private fun stringOrList() = Karslet.sequence<List<String>> {
         character('"')
         val first = characters(min = 0) { it != '"' }
         character('"')
@@ -28,7 +28,7 @@ class Demos {
         onSuccess { listOf(first.value()) + last.value() }
     }
 
-    private fun keywordLanguage() = Karslet.repeat<String?>(min = 0) {
+    private fun keywordLanguage() = Karslet.zeroOrMore<String?> {
         var state: String? = null
         beforeAttempt { state = null }
         character('[')
@@ -38,7 +38,7 @@ class Demos {
         onSuccess { state }
     }
 
-    private fun keywordSpecifiers() = Karslet.repeat<List<String>?>(min = 0) {
+    private fun keywordSpecifiers() = Karslet.zeroOrMore<List<String>?> {
         var state: List<String>? = null
         beforeAttempt { state = null }
         character('(')
@@ -48,14 +48,14 @@ class Demos {
         onSuccess { state }
     }
 
-    private fun pxKeyword() = Karslet.all<PxKeyword> {
+    private fun pxKeyword() = Karslet.sequence<PxKeyword> {
         val kw = characters(min = 1) { it !in arrayOf('[', '(', '=') }
         val lang = include(keywordLanguage())
         val spec = include(keywordSpecifiers())
         onSuccess { PxKeyword(kw.value(), lang.value(), spec.value()) }
     }
 
-    private fun pxValue() = Karslet.any<PxValue> {
+    private fun pxValue() = Karslet.choice<PxValue> {
         val strings = all<List<String>?> {
             val x = include(stringOrList())
             character(';')
@@ -77,7 +77,7 @@ class Demos {
     @Test
     fun pxParserDemo() {
 
-        val parser = Karslet.repeat<List<PxRow>> {
+        val parser = Karslet.zeroOrMore<List<PxRow>> {
             val state = mutableListOf<PxRow>()
 
             val row = all<PxRow> {

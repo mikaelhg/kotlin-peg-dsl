@@ -1,10 +1,12 @@
-package io.mikael.karslet
+package io.mikael.karslet.operators
 
+import io.mikael.karslet.KarsletMarker
+import io.mikael.karslet.ParserConfiguration
 import java.nio.BufferUnderflowException
 import java.nio.CharBuffer
 
 @KarsletMarker
-open class MatchCharacters : TerminalMatcher<String>() {
+open class MatchCharacters : TerminalOperator<String>() {
 
     private lateinit var matcher: (Char) -> Boolean
 

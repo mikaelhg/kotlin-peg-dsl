@@ -56,17 +56,17 @@ class Demos {
     }
 
     private fun pxValue() = Karslet.choice<PxValue> {
-        val strings = all<List<String>?> {
+        val strings = sequence<List<String>?> {
             val x = include(stringOrList())
             character(';')
             onSuccess { x.value() }
         }
-        val numbers = all<Long?> {
+        val numbers = sequence<Long?> {
             val x = characters(min = 1) { it.isDigit() }
             character(';')
             onSuccess { x.value().toLongOrNull() }
         }
-        val letters = all<String?> {
+        val letters = sequence<String?> {
             val x = characters(min = 1) { it.isLetterOrDigit() }
             character(';')
             onSuccess { x.value() }
@@ -80,7 +80,7 @@ class Demos {
         val parser = Karslet.zeroOrMore<List<PxRow>> {
             val state = mutableListOf<PxRow>()
 
-            val row = all<PxRow> {
+            val row = sequence<PxRow> {
                 val k = include(pxKeyword())
                 character('=')
                 val v = include(pxValue())

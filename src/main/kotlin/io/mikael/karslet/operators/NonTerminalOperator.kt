@@ -1,5 +1,6 @@
 package io.mikael.karslet.operators
 
+import io.mikael.karslet.Karslet
 import io.mikael.karslet.Parser
 import io.mikael.karslet.ParserConfiguration
 
@@ -38,17 +39,20 @@ abstract class NonTerminalOperator<T> : Parser<T> {
     fun whitespace(min: Int = 0, max: Int = Integer.MAX_VALUE) =
         add(MatchCharacters()) { this.min = min; this.max = max; match { it.isWhitespace() } }
 
-    fun <T> any(init: OrderedChoiceOperator<T>.() -> Unit) = add(OrderedChoiceOperator(), init)
+    fun <T> choice(init: OrderedChoiceOperator<T>.() -> Unit) = include(Karslet.choice(init))
 
-    fun <T> all(init: SequenceOperator<T>.() -> Unit) = add(SequenceOperator(), init)
+    fun <T> sequence(init: SequenceOperator<T>.() -> Unit) = include(Karslet.sequence(init))
 
-    fun <T> repeat(init: RepeatingOperator<T>.() -> Unit) = add(RepeatingOperator(), init)
+    fun <T> oneOrMore(init: RepeatingOperator<T>.() -> Unit) = include(Karslet.oneOrMore(init))
+
+    fun <T> zeroOrMore(init: RepeatingOperator<T>.() -> Unit) = include(Karslet.zeroOrMore(init))
 
     fun <T> repeat(min: Int = 1, max: Int = Integer.MAX_VALUE, init: RepeatingOperator<T>.() -> Unit) =
-        add(RepeatingOperator<T>()) { this.min = min; this.max = max; this.init() }
+        include(Karslet.repeat(min, max, init))
 
     @SuppressWarnings("WeakerAccess")
-    protected fun <T : Parser<*>> add(child: T, init: T.() -> Unit) = child.also(init).also(children::add)
+    protected fun <T : Parser<*>> add(child: T, init: T.() -> Unit) =
+        child.also(init).also(children::add)
 
     fun <T: Parser<*>> include(item: T): T = item.also(children::add)
 

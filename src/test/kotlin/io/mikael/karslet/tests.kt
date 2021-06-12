@@ -12,38 +12,49 @@ typealias PxRow = Pair<PxKeyword, PxValue>
 class Demos {
 
     private fun stringOrList() = Karslet.sequence<List<String>> {
+
         character('"')
         val first = characters(min = 0) { it != '"' }
         character('"')
-        val last = repeat<List<String>>(min = 0) {
+
+        val last = zeroOrMore<List<String>> {
             val state = mutableListOf<String>()
             beforeAttempt { state.clear() }
+
             character(',')
             character('"')
             val current = characters(min = 0) { it != '"' }
             character('"')
+
             onIteration { state += current.value() }
             onSuccess { state }
         }
+
         onSuccess { listOf(first.value()) + last.value() }
     }
 
-    private fun keywordLanguage() = Karslet.zeroOrMore<String?> {
+    private fun keywordLanguage() = Karslet.optional<String?> {
+
         var state: String? = null
         beforeAttempt { state = null }
+
         character('[')
         val lang = characters(min = 2, max = 2) { it.isLetter() }
         character(']')
+
         onIteration { state = lang.value() }
         onSuccess { state }
     }
 
-    private fun keywordSpecifiers() = Karslet.zeroOrMore<List<String>?> {
+    private fun keywordSpecifiers() = Karslet.optional<List<String>?> {
+
         var state: List<String>? = null
         beforeAttempt { state = null }
+
         character('(')
         val strings = include(stringOrList())
         character(')')
+
         onIteration { state = strings.value() }
         onSuccess { state }
     }
@@ -52,6 +63,7 @@ class Demos {
         val kw = characters(min = 1) { it !in arrayOf('[', '(', '=') }
         val lang = include(keywordLanguage())
         val spec = include(keywordSpecifiers())
+
         onSuccess { PxKeyword(kw.value(), lang.value(), spec.value()) }
     }
 

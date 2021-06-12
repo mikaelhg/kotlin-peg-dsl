@@ -43,11 +43,11 @@ open class RepeatingOperator<T>() : NonTerminalOperator<T>() {
                 is NonTerminalOperator -> c.beforeAttemptAction()
             }
         }
-        var current = 0
         beforeAttemptAction()
+        var current = 0
         while (true) {
             resetParserState()
-            if (current > max) break
+            if (current >= max) break
             val iterationSuccess = loopThroughChildren(r)
             if (iterationSuccess) {
                 iterationAction()
@@ -56,7 +56,7 @@ open class RepeatingOperator<T>() : NonTerminalOperator<T>() {
             }
             current += 1
         }
-        val success = current in min until max
+        val success = current in min .. max
         if (success) successAction()
         resetParserState()
         return success

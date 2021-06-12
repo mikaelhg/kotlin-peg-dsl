@@ -1,6 +1,7 @@
 package io.mikael.karslet.operators
 
 import io.mikael.karslet.KarsletMarker
+import io.mikael.karslet.MAX_REPEATS
 import io.mikael.karslet.ParserConfiguration
 import java.nio.BufferUnderflowException
 import java.nio.CharBuffer
@@ -16,7 +17,7 @@ open class MatchCharacters : TerminalOperator<String>() {
     var min = 1
 
     @ParserConfiguration
-    var max = Integer.MAX_VALUE
+    var max = MAX_REPEATS
 
     @ParserConfiguration
     fun match(matcher: (Char) -> Boolean) {

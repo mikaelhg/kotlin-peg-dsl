@@ -32,9 +32,17 @@ abstract class NonTerminalOperator<T> : Parser<T> {
         this.successAction = successAction
     }
 
+    /* State management */
+
+    override fun resetParserState() {
+        children.forEach(Parser<*>::resetParserState)
+    }
+
+    override fun value() = successAction()
+
     /* Terminal operations */
 
-    fun characters(init: MatchCharacters.() -> Unit) = add(MatchCharacters(), init)
+    fun characters(init: MatchCharacters.() -> Unit) = MatchCharacters().also(init).also(children::add)
 
     fun characters(min: Int = 1, max: Int = MAX_REPEATS, char: Char) = characters(min, max) { it == char }
 
@@ -63,15 +71,6 @@ abstract class NonTerminalOperator<T> : Parser<T> {
 
     fun <T> zeroOrMore(init: RepeatingOperator<T>.() -> Unit) = include(Karslet.zeroOrMore(init))
 
-    protected fun <T : Parser<*>> add(child: T, init: T.() -> Unit) =
-        child.also(init).also(children::add)
-
     fun <T: Parser<*>> include(item: T): T = item.also(children::add)
-
-    override fun resetParserState() {
-        children.forEach(Parser<*>::resetParserState)
-    }
-
-    override fun value() = successAction()
 
 }

@@ -1,5 +1,6 @@
 package io.mikael.karslet.operators
 
+import io.mikael.karslet.MAX_REPEATS
 import io.mikael.karslet.ParserConfiguration
 import java.nio.CharBuffer
 
@@ -11,9 +12,9 @@ open class RepeatingOperator<T>() : NonTerminalOperator<T>() {
     var min = 1
 
     @ParserConfiguration
-    var max = Integer.MAX_VALUE
+    var max = MAX_REPEATS
 
-    constructor(min: Int = 0, max: Int = Integer.MAX_VALUE, iterationAction: () -> Unit = {}) : this() {
+    constructor(min: Int = 0, max: Int = MAX_REPEATS, iterationAction: () -> Unit = {}) : this() {
         this.min = min
         this.max = max
         this.iterationAction = iterationAction

@@ -8,6 +8,30 @@ const val MAX_REPEATS = Integer.MAX_VALUE
 
 /**
  * Karslet is a Parsing Expression Grammar (PEG) domain specific language (DSL) library.
+ *
+ * ```kotlin
+ * val rule = Karslet.sequence<List<String>> {
+ *     character('"')
+ *     val first = characters(min = 0) { it != '"' }
+ *     character('"')
+ *
+ *     val last = zeroOrMore<List<String>> {
+ *         val state = mutableListOf<String>()
+ *         beforeAttempt { state.clear() }
+ *
+ *         character(',')
+ *         character('"')
+ *         val current = characters(min = 0) { it != '"' }
+ *         character('"')
+ *
+ *         onIteration { state += current.value() }
+ *         onSuccess { state }
+ *
+ *     }
+
+ *     onSuccess { listOf(first.value()) + last.value() }
+ * }
+ * ```
  */
 object Karslet {
 

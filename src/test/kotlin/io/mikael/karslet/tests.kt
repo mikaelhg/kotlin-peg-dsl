@@ -89,7 +89,7 @@ class Demos {
     @Test
     fun pxParserDemo() {
 
-        val parser = Karslet.zeroOrMore<List<PxRow>> {
+        val parser = Karslet.oneOrMore<List<PxRow>> {
             val state = mutableListOf<PxRow>()
 
             val row = sequence<PxRow> {

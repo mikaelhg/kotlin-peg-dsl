@@ -1,7 +1,6 @@
 # Karslet
 
-[![Release](https://jitpack.io/v/com.github.mikaelhg/kotlin-peg-dsl.svg)]
-(https://jitpack.io/#com.github.mikaelhg/kotlin-peg-dsl)
+[![Release](https://jitpack.io/v/com.github.mikaelhg/kotlin-peg-dsl.svg)](https://jitpack.io/#com.github.mikaelhg/kotlin-peg-dsl)
 
 A Kotlin domain specific language (DSL) and library for easily creating
 recursive descent parsers in the [parsing expression grammar (PEG)][1] tradition.

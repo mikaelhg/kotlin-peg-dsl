@@ -1,7 +1,7 @@
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.6.10"
 }
 
 group = "io.mikael.karslet"
@@ -20,7 +20,7 @@ repositories {
 dependencies {
     implementation(enforcedPlatform(kotlin("bom")))
     implementation(kotlin("stdlib-jdk8"))
-    testImplementation(enforcedPlatform("org.junit:junit-bom:5.7.2"))
+    testImplementation(enforcedPlatform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
@@ -40,6 +40,11 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 publishing {
     publications {
-        create<MavenPublication>("maven")
+        create<MavenPublication>("maven") {
+            groupId = "com.github.mikaelhg"
+            artifactId = "kotlin-peg-dsl"
+            version = project.version.toString()
+            from(components["kotlin"])
+        }
     }
 }

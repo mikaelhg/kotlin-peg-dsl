@@ -5,6 +5,7 @@ import io.mikael.karslet.MAX_REPEATS
 import io.mikael.karslet.Parser
 import io.mikael.karslet.ParserConfiguration
 
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class NonTerminalOperator<T> : Parser<T> {
 
     val children: MutableList<Parser<*>> = mutableListOf()

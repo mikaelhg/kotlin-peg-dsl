@@ -1,5 +1,6 @@
 package io.mikael.karslet
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.nio.CharBuffer
 
@@ -11,8 +12,7 @@ typealias PxRow = Pair<PxKeyword, PxValue>
 
 class Demos {
 
-    private fun stringOrList() = Karslet.sequence<List<String>> {
-
+    private fun multilineString() = Karslet.sequence<String> {
         character('"')
         val first = characters(min = 0) { it != '"' }
         character('"')
@@ -21,10 +21,27 @@ class Demos {
             val state = mutableListOf<String>()
             beforeAttempt { state.clear() }
 
-            character(',')
+            characters(min = 1, max = 2) { it == '\r' || it == '\n' }
             character('"')
             val current = characters(min = 0) { it != '"' }
             character('"')
+
+            onIteration { state += current.value() }
+            onSuccess { state }
+        }
+
+        onSuccess { first.value() + last.value().joinToString(separator = "") }
+    }
+
+    private fun stringOrList() = Karslet.sequence<List<String>> {
+        val first = include(multilineString())
+
+        val last = zeroOrMore<List<String>> {
+            val state = mutableListOf<String>()
+            beforeAttempt { state.clear() }
+
+            character(',')
+            val current = include(multilineString())
 
             onIteration { state += current.value() }
             onSuccess { state }
@@ -63,7 +80,6 @@ class Demos {
         val kw = characters(min = 1) { it !in arrayOf('[', '(', '=') }
         val lang = include(keywordLanguage())
         val spec = include(keywordSpecifiers())
-
         onSuccess { PxKeyword(kw.value(), lang.value(), spec.value()) }
     }
 
@@ -79,7 +95,7 @@ class Demos {
             onSuccess { x.value().toLongOrNull() }
         }
         val letters = sequence<String?> {
-            val x = characters(min = 1) { it.isLetterOrDigit() }
+            val x = characters(min = 1) { it != ';' }
             character(';')
             onSuccess { x.value() }
         }
@@ -106,9 +122,10 @@ class Demos {
             onSuccess { state }
         }
 
-        PxTestData.rows.forEach { row ->
+        PxTestData.rows.forEach { row, expected ->
             val success = parser.parse(CharBuffer.wrap(row))
             println("$success ${parser.value()}")
+            Assertions.assertEquals(expected, success)
         }
 
     }

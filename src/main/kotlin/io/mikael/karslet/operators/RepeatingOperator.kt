@@ -28,7 +28,7 @@ open class RepeatingOperator<T>() : NonTerminalOperator<T>() {
         this.iterationAction = iterationAction
     }
 
-    private fun loopThroughChildren(r: CharBuffer): Boolean {
+    protected open fun loopThroughChildren(r: CharBuffer): Boolean {
         val startPosition = r.position()
         val success = children.all { it.parse(r) }
         if (!success) {

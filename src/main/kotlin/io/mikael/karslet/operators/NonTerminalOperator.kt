@@ -24,12 +24,12 @@ abstract class NonTerminalOperator<T> : Parser<T> {
     lateinit var successAction: () -> T
 
     @ParserConfiguration
-    fun beforeAttempt(beforeAttemptAction: () -> Unit) {
+    open fun beforeAttempt(beforeAttemptAction: () -> Unit) {
         this.beforeAttemptAction = beforeAttemptAction
     }
 
     @ParserConfiguration
-    fun onSuccess(successAction: () -> T) {
+    open fun onSuccess(successAction: () -> T) {
         this.successAction = successAction
     }
 
@@ -43,35 +43,35 @@ abstract class NonTerminalOperator<T> : Parser<T> {
 
     /* Terminal operations */
 
-    fun characters(init: MatchCharacters.() -> Unit) = MatchCharacters().also(init).also(children::add)
+    open fun characters(init: MatchCharacters.() -> Unit) = MatchCharacters().also(init).also(children::add)
 
-    fun characters(min: Int = 1, max: Int = MAX_REPEATS, char: Char) = characters(min, max) { it == char }
+    open fun characters(min: Int = 1, max: Int = MAX_REPEATS, char: Char) = characters(min, max) { it == char }
 
-    fun character(char: Char) = characters(1, 1) { it == char }
+    open fun character(char: Char) = characters(1, 1) { it == char }
 
-    fun character(vararg char: Char) = characters(1, 1) { it in char }
+    open fun character(vararg char: Char) = characters(1, 1) { it in char }
 
-    fun characters(min: Int = 1, max: Int = MAX_REPEATS, matcher: (Char) -> Boolean) =
+    open fun characters(min: Int = 1, max: Int = MAX_REPEATS, matcher: (Char) -> Boolean) =
         characters(init = { this.min = min; this.max = max; match(matcher) })
 
-    fun whitespace(min: Int = 0, max: Int = MAX_REPEATS) =
+    open fun whitespace(min: Int = 0, max: Int = MAX_REPEATS) =
         characters(min, max) { it.isWhitespace() }
 
     /* Non-terminal operations */
 
-    fun <T> choice(init: OrderedChoiceOperator<T>.() -> Unit) = include(Karslet.choice(init))
+    open fun <T> choice(init: OrderedChoiceOperator<T>.() -> Unit) = include(Karslet.choice(init))
 
-    fun <T> sequence(init: SequenceOperator<T>.() -> Unit) = include(Karslet.sequence(init))
+    open fun <T> sequence(init: SequenceOperator<T>.() -> Unit) = include(Karslet.sequence(init))
 
-    fun <T> repeat(min: Int = 1, max: Int = MAX_REPEATS, init: RepeatingOperator<T>.() -> Unit) =
+    open fun <T> repeat(min: Int = 1, max: Int = MAX_REPEATS, init: RepeatingOperator<T>.() -> Unit) =
         include(Karslet.repeat(min, max, init))
 
-    fun <T> optional(init: RepeatingOperator<T>.() -> Unit) = include(Karslet.optional(init))
+    open fun <T> optional(init: RepeatingOperator<T>.() -> Unit) = include(Karslet.optional(init))
 
-    fun <T> oneOrMore(init: RepeatingOperator<T>.() -> Unit) = include(Karslet.oneOrMore(init))
+    open fun <T> oneOrMore(init: RepeatingOperator<T>.() -> Unit) = include(Karslet.oneOrMore(init))
 
-    fun <T> zeroOrMore(init: RepeatingOperator<T>.() -> Unit) = include(Karslet.zeroOrMore(init))
+    open fun <T> zeroOrMore(init: RepeatingOperator<T>.() -> Unit) = include(Karslet.zeroOrMore(init))
 
-    fun <T: Parser<*>> include(item: T): T = item.also(children::add)
+    open fun <T: Parser<*>> include(item: T): T = item.also(children::add)
 
 }

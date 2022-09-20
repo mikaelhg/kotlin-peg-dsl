@@ -1,11 +1,11 @@
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.7.10"
 }
 
 group = "io.mikael.karslet"
-version = "0.1.0"
+version = "0.1.3"
 
 java {
     toolchain {
@@ -20,7 +20,7 @@ repositories {
 dependencies {
     implementation(enforcedPlatform(kotlin("bom")))
     implementation(kotlin("stdlib-jdk8"))
-    testImplementation(enforcedPlatform("org.junit:junit-bom:5.8.2"))
+    testImplementation(enforcedPlatform("org.junit:junit-bom:5.9.0"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }

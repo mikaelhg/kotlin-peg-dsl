@@ -1,16 +1,18 @@
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.8.0"
 }
 
 group = "io.mikael.karslet"
-version = "0.1.3"
+version = "0.1.4"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
+    withJavadocJar()
+    withSourcesJar()
 }
 
 repositories {
@@ -18,9 +20,9 @@ repositories {
 }
 
 dependencies {
-    implementation(enforcedPlatform(kotlin("bom")))
+    implementation(platform(kotlin("bom")))
     implementation(kotlin("stdlib-jdk8"))
-    testImplementation(enforcedPlatform("org.junit:junit-bom:5.9.0"))
+    testImplementation(platform("org.junit:junit-bom:5.9.0"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
@@ -44,7 +46,7 @@ publishing {
             groupId = "com.github.mikaelhg"
             artifactId = "kotlin-peg-dsl"
             version = project.version.toString()
-            from(components["kotlin"])
+            from(components["java"])
         }
     }
 }

@@ -33,6 +33,7 @@ const val MAX_REPEATS = Integer.MAX_VALUE
  * }
  * ```
  */
+@Suppress("RemoveExplicitTypeArguments")
 object Karslet {
 
     fun <T> choice(init: OrderedChoiceOperator<T>.() -> Unit) = OrderedChoiceOperator<T>().also(init)

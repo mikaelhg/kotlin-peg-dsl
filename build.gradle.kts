@@ -22,7 +22,6 @@ repositories {
 dependencies {
     implementation(platform(kotlin("bom")))
     implementation(kotlin("stdlib-jdk8"))
-    testImplementation(platform("org.junit:junit-bom:5.12.2"))
     testImplementation(kotlin("test"))
 }
 

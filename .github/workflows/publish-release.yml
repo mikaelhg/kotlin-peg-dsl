@@ -41,9 +41,7 @@ jobs:
           echo "version=${VERSION_WITHOUT_V}" >> "$GITHUB_OUTPUT"
 
       - name: Build and Publish with Gradle
-        run: > 
-          ./gradlew build publishMavenPublicationToGithubPackages 
-            -Pversion=${{ steps.get_version.outputs.version }}
+        run: ./gradlew clean build publishMavenPublicationToGithubPackages -Pversion=${{ steps.get_version.outputs.version }}
         env:
           GPR_USER: ${{ github.actor }}
           GPR_TOKEN: ${{ secrets.GITHUB_TOKEN }}

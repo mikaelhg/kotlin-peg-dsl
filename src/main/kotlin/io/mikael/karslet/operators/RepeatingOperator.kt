@@ -58,7 +58,6 @@ open class RepeatingOperator<T>() : NonTerminalOperator<T>() {
             current += 1
         }
         val success = current in min .. max
-        if (success) successAction()
         resetParserState()
         return success
     }

@@ -99,4 +99,25 @@ class RepeatingOperatorTests {
         assertFalse(parser.parse(buffer))
         assertEquals(0, buffer.position())
     }
+
+    @Test
+    fun `parse does not invoke onSuccess, value does exactly once per call`() {
+        var calls = 0
+        val parser = Karslet.zeroOrMore<Int> {
+            character('a')
+            onSuccess { ++calls }
+        }
+        assertTrue(parser.parse(CharBuffer.wrap("aaa")))
+        assertEquals(0, calls)
+        assertEquals(1, parser.value())
+        assertEquals(1, calls)
+    }
+
+    @Test
+    fun `repeat without onSuccess still parses`() {
+        val parser = Karslet.zeroOrMore<Unit> { character('a') }
+        val buffer = CharBuffer.wrap("aab")
+        assertTrue(parser.parse(buffer))
+        assertEquals(2, buffer.position())
+    }
 }

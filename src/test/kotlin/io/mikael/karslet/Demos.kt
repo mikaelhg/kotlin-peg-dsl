@@ -4,20 +4,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.nio.CharBuffer
 
-data class PxKeyword(
-    val keyword: String,
-    val language: String?,
-    val specifiers: List<String>?
-)
-
-data class PxValue(
-    val numberValue: Long?,
-    val stringValue: String?,
-    val listValue: List<String>?
-)
-
-typealias PxRow = Pair<PxKeyword, PxValue>
-
 class Demos {
 
     private fun multilineString() = Karslet.sequence<String> {
@@ -130,7 +116,7 @@ class Demos {
             onSuccess { state }
         }
 
-        PxTestData.rows.forEach { row, expected ->
+        PxTestData.rows.forEach { (row, expected) ->
             val success = parser.parse(CharBuffer.wrap(row))
             println("$success ${parser.value()}")
             Assertions.assertEquals(expected, success)

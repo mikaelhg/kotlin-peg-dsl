@@ -33,7 +33,7 @@ open class MatchCharacters : TerminalOperator<String>() {
     override fun parse(r: CharBuffer): Boolean {
         var current = 0
         while (true) {
-            if (current > max) return true
+            if (current >= max) return true
             val startPosition = r.position()
             try {
                 val c = r.get()

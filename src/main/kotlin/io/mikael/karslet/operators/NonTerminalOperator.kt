@@ -1,10 +1,12 @@
 package io.mikael.karslet.operators
 
 import io.mikael.karslet.Karslet
+import io.mikael.karslet.KarsletMarker
 import io.mikael.karslet.MAX_REPEATS
 import io.mikael.karslet.Parser
 import io.mikael.karslet.ParserConfiguration
 
+@KarsletMarker
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class NonTerminalOperator<T> : Parser<T> {
 

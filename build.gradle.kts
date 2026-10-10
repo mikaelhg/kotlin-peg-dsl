@@ -1,14 +1,14 @@
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "2.4.20"
+    kotlin("jvm") version "2.4.21"
 }
 
 group = "io.mikael.karslet"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
     withSourcesJar()
 }
@@ -26,6 +26,7 @@ tasks.withType<Test> {
     testLogging {
         events("passed", "skipped", "failed")
     }
+    outputs.upToDateWhen { false }
 }
 
 publishing {
@@ -40,7 +41,7 @@ publishing {
                 licenses {
                     license {
                         name = "The Apache License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
                     }
                 }
                 developers {
